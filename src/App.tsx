@@ -2,10 +2,11 @@ import { useEffect, useState } from 'react'
 import './App.css'
 import { Event, SimplePool } from 'nostr-tools'
 import { RELAYS } from './constants/relays'
+import { NotesList } from './components/NotesList'
 
 function App() {
-
   const [pool, setPool] = useState<SimplePool | null>(null)
+  const [events, setEvents] = useState<Event[]>([])
 
   /**
    * Settin up relays pool
@@ -29,11 +30,11 @@ function App() {
       kinds: [1],
       limit: 100,
       // Filtering words
-      '#t': ['https']
+      // '#t': ['https']
     }])
 
     sub.on('event', (data: Event) => {
-      console.log('data', data)
+      setEvents((prev) => [data, ...prev])
     })
 
     return () => {
@@ -42,9 +43,7 @@ function App() {
   }, [pool])
 
   return (
-    <h1 className="text-3xl font-bold underline">
-      Hello world!
-    </h1>
+    <NotesList notes={events} />
   )
 }
 
