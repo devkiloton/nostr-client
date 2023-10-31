@@ -7,7 +7,7 @@ interface Props {
   hashtags: string[];
 }
 
-export default function CreateNote({pool}: Props) {
+export default function CreateNote({pool, hashtags}: Props) {
   const [input, setInput] = useState("");
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -21,8 +21,8 @@ export default function CreateNote({pool}: Props) {
     const _baseEvent = {
       content: input,
       created_at: Math.round(Date.now() / 1000),
-      kind: 1,
-      tags: [['t', 'nostr']],
+        kind: 1,
+        tags: hashtags.map((tag) => ["t", tag]),
     } as EventTemplate;
 
     // Sign this event (allow the user to sign it with their private key)
@@ -37,10 +37,11 @@ export default function CreateNote({pool}: Props) {
         sig,
         pubkey,
         id: getEventHash({ ..._baseEvent, pubkey }),
+        
       };
 
       let isCleared = false;
-        for await (const req of pool.publish(RELAYS, event)) {
+        for await (const _req of pool.publish(RELAYS, event)) {
             if (isCleared === false) {
                 setInput("");
                 isCleared = true
@@ -54,18 +55,18 @@ export default function CreateNote({pool}: Props) {
   };
 
   return (
-    <div className="mb-4">
-      <h2 className="text-start text-lg text-white font-semibold mb-2">What's In Your Mind??</h2>
+    <div>
+      <h2 className="text-start text-lg text-white font-semibold mb-2 w-full ">What's In Your Mind??</h2>
       <form onSubmit={onSubmit}>
         <textarea
           placeholder="Write your note here..."
-          className="w-full p-3 rounded-xl"
+          className="w-full px-4 py-3 rounded-xl"
           value={input}
           onChange={(e) => setInput(e.target.value)}
           rows={6}
         />
         <div className="flex justify-end mt-2">
-          <button className="bg-teal-500 px-8 py-2 rounded-8 font-bold hover:bg-violet-600 active:scale-90">
+          <button className="bg-teal-500 px-8 py-2 rounded-8 font-bold hover:bg-violet-600">
             Publish
           </button>
         </div>

@@ -7,13 +7,15 @@ import { MetadataPbKey } from './types/MetadataPbKey'
 import { binaryTreeDescendingDate } from './helpers/binaryTreeDescendingDate'
 import { useDebounce } from 'use-debounce'
 import CreateNote from './components/CreateNote'
+import HashtagsFilter from './components/HashTagsFilter'
 
 
 function App() {
   const [pool, setPool] = useState<SimplePool | null>(null)
   const [eventsImmediate, setEvents] = useState<Event[]>([])
-  const [events] = useDebounce(eventsImmediate, 400)
   const [metadata, setMetadata] = useState<Record<string, MetadataPbKey>>({})
+  const [hashtags, setHashtags] = useState<string[]>([])
+  const [events] = useDebounce(eventsImmediate, 400)
   const metadataFetched = useRef<Record<string, boolean>>({})
 
   /**
@@ -33,11 +35,11 @@ function App() {
    */
   useEffect(() => {
     if (!pool) return
-
+    setEvents([])
     const sub = pool.sub(RELAYS, [{
       kinds: [1],
       limit: 100,
-      '#t': ['nostr']
+      '#t': hashtags
     }])
 
     sub.on('event', (data: Event) => {
@@ -47,7 +49,7 @@ function App() {
     return () => {
       sub.unsub()
     }
-  }, [pool])
+  }, [hashtags,pool])
 
   useEffect(() => {
     if (!pool) return;
@@ -82,7 +84,8 @@ function App() {
   return (
     <>
     <h1 className='text-start font-bold mb-4'>Nostr Feed</h1>
-    <CreateNote pool={pool}/>
+      <CreateNote hashtags={hashtags} pool={pool} />
+      <HashtagsFilter hashtags={hashtags} onChange={setHashtags}/>
     <NotesList metadataPbKey={metadata} notes={events} />
     </>
   )

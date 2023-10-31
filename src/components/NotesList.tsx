@@ -5,7 +5,7 @@ import { NoteCard } from "./NoteCard";
 
 export const NotesList = ({ notes, metadataPbKey }: NotesListProps) => {
     return (
-        <div className= "flex flex-col gap-4 max-w-2xl" >
+        <div className= "flex flex-col gap-4" >
         {notes.map((note) => (
             <NoteCard
                 key={crypto.randomUUID()}
