@@ -14,6 +14,7 @@ export const NotesList = ({ notes, metadataPbKey }: NotesListProps) => {
                     picture: metadataPbKey[note.pubkey]?.picture ?? `https://api.dicebear.com/5.x/identicon/svg?seed=${note.pubkey}`,
                     pubKey: note.pubkey,
                 }}
+                hashtags={note.tags.filter((hashtag) => hashtag[0] === 't').map((hashtag) => hashtag[1])}
                 content={note.content} />
         ))}
         </div>
