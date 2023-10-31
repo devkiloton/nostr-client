@@ -77,10 +77,12 @@ function App() {
     return () => { }
   }, [events, pool])
 
+  if(!pool) return <h1>Loading...</h1>
+
   return (
     <>
     <h1 className='text-start font-bold mb-4'>Nostr Feed</h1>
-    <CreateNote/>
+    <CreateNote pool={pool}/>
     <NotesList metadataPbKey={metadata} notes={events} />
     </>
   )
