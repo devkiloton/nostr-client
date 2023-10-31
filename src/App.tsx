@@ -3,10 +3,13 @@ import './App.css'
 import { Event, SimplePool } from 'nostr-tools'
 import { RELAYS } from './constants/relays'
 import { NotesList } from './components/NotesList'
+import { MetadataPbKey } from './types/MetadataPbKey'
+
 
 function App() {
   const [pool, setPool] = useState<SimplePool | null>(null)
   const [events, setEvents] = useState<Event[]>([])
+  const [metadata, setMetadata] = useState<Record<string, MetadataPbKey>>({})
 
   /**
    * Settin up relays pool
@@ -29,18 +32,45 @@ function App() {
     const sub = pool.sub(RELAYS, [{
       kinds: [1],
       limit: 100,
-      // Filtering words
-      // '#t': ['https']
+      '#t': ['nostr']
     }])
 
     sub.on('event', (data: Event) => {
-      setEvents((prev) => [data, ...prev])
+      setEvents((curr) => [data, ...curr])
     })
 
     return () => {
       sub.unsub()
     }
   }, [pool])
+
+  useEffect(() => {
+    if (!pool) return;
+
+    const pubKeysToFetch = events.map((event) => event.pubkey)
+
+    const sub = pool.sub(RELAYS, [{
+      kinds: [0],
+      authors: pubKeysToFetch,
+    }])
+
+    sub.on('event', (data: Event) => {
+      const metadata = JSON.parse(data.content) as MetadataPbKey
+
+      setMetadata((curr) => ({
+        ...curr,
+        [data.pubkey]: metadata,
+      }))
+    })
+
+    // eose = end of stored events
+    sub.on('eose', () => { 
+      sub.unsub()
+    })
+
+    return () => { }
+  }, [events, pool])
+  console.log(metadata)
 
   return (
     <NotesList notes={events} />
