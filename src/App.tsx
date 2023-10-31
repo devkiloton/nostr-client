@@ -6,6 +6,7 @@ import { NotesList } from './components/NotesList'
 import { MetadataPbKey } from './types/MetadataPbKey'
 import { binaryTreeDescendingDate } from './helpers/binaryTreeDescendingDate'
 import { useDebounce } from 'use-debounce'
+import CreateNote from './components/CreateNote'
 
 
 function App() {
@@ -77,7 +78,11 @@ function App() {
   }, [events, pool])
 
   return (
+    <>
+    <h1 className='text-start font-bold mb-4'>Nostr Feed</h1>
+    <CreateNote/>
     <NotesList metadataPbKey={metadata} notes={events} />
+    </>
   )
 }
 
