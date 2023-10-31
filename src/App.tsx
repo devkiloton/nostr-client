@@ -4,6 +4,7 @@ import { Event, SimplePool } from 'nostr-tools'
 import { RELAYS } from './constants/relays'
 import { NotesList } from './components/NotesList'
 import { MetadataPbKey } from './types/MetadataPbKey'
+import { binaryTreeDescendingDate } from './helpers/binaryTreeDescendingDate'
 
 
 function App() {
@@ -36,7 +37,7 @@ function App() {
     }])
 
     sub.on('event', (data: Event) => {
-      setEvents((curr) => [data, ...curr])
+      setEvents((curr) => binaryTreeDescendingDate(curr, data))
     })
 
     return () => {
@@ -70,7 +71,6 @@ function App() {
 
     return () => { }
   }, [events, pool])
-  console.log(metadata)
 
   return (
     <NotesList metadataPbKey={metadata} notes={events} />
