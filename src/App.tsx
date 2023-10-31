@@ -1,16 +1,19 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import './App.css'
 import { Event, SimplePool } from 'nostr-tools'
 import { RELAYS } from './constants/relays'
 import { NotesList } from './components/NotesList'
 import { MetadataPbKey } from './types/MetadataPbKey'
 import { binaryTreeDescendingDate } from './helpers/binaryTreeDescendingDate'
+import { useDebounce } from 'use-debounce'
 
 
 function App() {
   const [pool, setPool] = useState<SimplePool | null>(null)
-  const [events, setEvents] = useState<Event[]>([])
+  const [eventsImmediate, setEvents] = useState<Event[]>([])
+  const [events] = useDebounce(eventsImmediate, 400)
   const [metadata, setMetadata] = useState<Record<string, MetadataPbKey>>({})
+  const metadataFetched = useRef<Record<string, boolean>>({})
 
   /**
    * Settin up relays pool
@@ -48,7 +51,8 @@ function App() {
   useEffect(() => {
     if (!pool) return;
 
-    const pubKeysToFetch = events.map((event) => event.pubkey)
+    const pubKeysToFetch = events.filter((event) => metadataFetched.current[event.pubkey] === true).map((event) => event.pubkey)
+   pubKeysToFetch.forEach((pubKey) => metadataFetched.current[pubKey] = true)
 
     const sub = pool.sub(RELAYS, [{
       kinds: [0],

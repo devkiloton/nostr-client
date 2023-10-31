@@ -19,10 +19,10 @@ export const NoteCard = ({ content, user, created_at, hashtags }: NoteCardProps)
         </div>
       </div>
       <p className="text-start break-words">{content}</p>
-      <ul className="flex justify-start">
+      <ul className="flex justify-start flex-wrap">
         {
           hashtags.filter((hashtag) => hashtag !== "").map((hashtag) => (
-            <li key={hashtag} className="bg-gray-700 rounded-full px-3 py-1 text-sm font-semibold text-gray-200 mr-2 mb-2">
+            <li key={crypto.randomUUID()} className="bg-gray-700 rounded-full px-3 py-1 text-sm font-semibold text-gray-200 mr-2 mb-2">
               #{hashtag}
             </li>
           ))
