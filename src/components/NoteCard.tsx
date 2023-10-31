@@ -18,7 +18,7 @@ export const NoteCard = ({ content, user, created_at }: NoteCardProps) => {
           {new Date(created_at * 1000).toLocaleDateString()}
         </p>
       </div>
-      <p className="text-start">{content }</p>
+      <p className="text-start break-words">{content }</p>
     </div>
   );
 };
