@@ -73,7 +73,7 @@ function App() {
   console.log(metadata)
 
   return (
-    <NotesList notes={events} />
+    <NotesList metadataPbKey={metadata} notes={events} />
   )
 }
 
