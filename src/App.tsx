@@ -71,6 +71,7 @@ function App() {
       }))
     })
 
+
     // eose = end of stored events
     sub.on('eose', () => { 
       sub.unsub()
